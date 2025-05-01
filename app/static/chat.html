@@ -1,20 +1,169 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Knowledge Assistant</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+        }
+
+        .container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90%;
+            max-height: 700px;
+        }
+
+        .header {
+            background-color: #2575fc;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .file-upload-section {
+            padding: 15px;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        input[type="file"] {
+            border: none;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .upload-btn {
+            padding: 10px 15px;
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            background-color: #1e61d1;
+        }
+
+        #uploadStatus {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .chat-container {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-box {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .user-message {
+            background-color: #2575fc;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .ai-message {
+            background-color: #e0e0e0;
+            color: #333;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        .input-section {
+            display: flex;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            margin-right: 10px;
+        }
+
+        .send-btn {
+            padding: 12px 18px;
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background-color: #1e61d1;
+        }
+    </style>
 </head>
 <body>
-    <h2>📄 Upload Documents</h2>
-    <input type="file" id="docUpload" multiple>
-    <button onclick="uploadDocs()">Upload</button>
-    <div id="uploadStatus"></div>
 
-    <hr>
+    <div class="container">
+        <div class="header">AI Knowledge Assistant</div>
 
-    <h2>💬 Chat</h2>
-    <div id="chatBox" style="border:1px solid #ccc; padding:10px; height:300px; overflow-y:scroll;"></div>
-    <input type="text" id="userInput" placeholder="Ask something..." style="width:80%">
-    <button onclick="sendQuestion()">Send</button>
+        <!-- File Upload Section -->
+        <div class="file-upload-section">
+            <input type="file" id="docUpload" multiple>
+            <button class="upload-btn" onclick="uploadDocs()">Upload</button>
+        </div>
+        <div id="uploadStatus"></div>
+
+        <div class="chat-container">
+            <div id="chatBox" class="chat-box"></div>
+        </div>
+
+        <!-- Chat Input Section -->
+        <div class="input-section">
+            <input type="text" id="userInput" placeholder="Ask something..." />
+            <button class="send-btn" onclick="sendQuestion()">➤</button>
+        </div>
+    </div>
 
     <script>
         function uploadDocs() {
@@ -35,7 +184,7 @@
             const message = input.value;
             if (!message) return;
 
-            addToChat("🧑‍💻 You: " + message);
+            addToChat("🧑‍💻 You: " + message, "user-message");
             input.value = "";
 
             const formData = new FormData();
@@ -45,15 +194,19 @@
                 method: "POST",
                 body: formData
             }).then(res => res.json()).then(data => {
-                addToChat("🤖 AI: " + data.answer);
+                addToChat("🤖 AI: " + x.answer, "ai-message");
             });
         }
 
-        function addToChat(message) {
+        function addToChat(message, type) {
             const chatBox = document.getElementById("chatBox");
-            chatBox.innerHTML += `<div>${message}</div>`;
+            const div = document.createElement('div');
+            div.classList.add('message', type);
+            div.innerHTML = message;
+            chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
+
 </body>
 </html>
