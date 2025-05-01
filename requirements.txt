@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+numpy
+scikit-learn
+nltk
+websockets
+faiss-cpu
+pymupdf
+langchain
+transformers 
+langchain-community

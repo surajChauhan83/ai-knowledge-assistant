@@ -1,0 +1,17 @@
+# Ignore virtual environment
+venv/
+.env
+
+
+# Ignore flagged or temporary files
+flagged/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# Ignore VS Code settings (if using VS Code)
+.vscode/
+
+# Ignore Hugging Face cache (if applicable)
+huggingface/

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Knowledge Assistant</title>
+</head>
+<body>
+    <h2>📄 Upload Documents</h2>
+    <input type="file" id="docUpload" multiple>
+    <button onclick="uploadDocs()">Upload</button>
+    <div id="uploadStatus"></div>
+
+    <hr>
+
+    <h2>💬 Chat</h2>
+    <div id="chatBox" style="border:1px solid #ccc; padding:10px; height:300px; overflow-y:scroll;"></div>
+    <input type="text" id="userInput" placeholder="Ask something..." style="width:80%">
+    <button onclick="sendQuestion()">Send</button>
+
+    <script>
+        function uploadDocs() {
+            const files = document.getElementById("docUpload").files;
+            const formData = new FormData();
+            for (let file of files) formData.append("files", file);
+
+            fetch("/upload/", {
+                method: "POST",
+                body: formData
+            }).then(res => res.json()).then(data => {
+                document.getElementById("uploadStatus").innerText = data.message;
+            });
+        }
+
+        function sendQuestion() {
+            const input = document.getElementById("userInput");
+            const message = input.value;
+            if (!message) return;
+
+            addToChat("🧑‍💻 You: " + message);
+            input.value = "";
+
+            const formData = new FormData();
+            formData.append("question", message);
+
+            fetch("/chat/", {
+                method: "POST",
+                body: formData
+            }).then(res => res.json()).then(data => {
+                addToChat("🤖 AI: " + data.answer);
+            });
+        }
+
+        function addToChat(message) {
+            const chatBox = document.getElementById("chatBox");
+            chatBox.innerHTML += `<div>${message}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
