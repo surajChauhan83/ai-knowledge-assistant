@@ -168,35 +168,64 @@
     <script>
         function uploadDocs() {
             const files = document.getElementById("docUpload").files;
+            const uploadBtn = document.querySelector(".upload-btn");
+            const uploadStatus = document.getElementById("uploadStatus");
+        
+            if (files.length === 0) {
+                uploadStatus.innerText = "Please select a file to upload.";
+                return;
+            }
+        
             const formData = new FormData();
             for (let file of files) formData.append("files", file);
-
+        
+            // Disable the button and show loading text
+            uploadBtn.disabled = true;
+            uploadBtn.innerText = "Uploading... ⏳";
+            uploadStatus.innerText = "";
+        
             fetch("/upload/", {
                 method: "POST",
                 body: formData
-            }).then(res => res.json()).then(data => {
-                document.getElementById("uploadStatus").innerText = data.message;
+            })
+            .then(res => res.json())
+            .then(data => {
+                uploadStatus.innerText = data.message;
+            })
+            .catch(() => {
+                uploadStatus.innerText = "Upload failed. Try again.";
+            })
+            .finally(() => {
+                // Restore button state
+                uploadBtn.disabled = false;
+                uploadBtn.innerText = "Upload";
             });
         }
+        
 
         function sendQuestion() {
             const input = document.getElementById("userInput");
             const message = input.value;
+            console.log("Sent message:", message);  // Log the message to debug
             if (!message) return;
-
-            addToChat("🧑‍💻 You: " + message, "user-message");
-            input.value = "";
-
+        
             const formData = new FormData();
-            formData.append("question", message);
-
+            formData.append("question", message);  // Must match 'question' in Form(...)
+        
             fetch("/chat/", {
                 method: "POST",
                 body: formData
-            }).then(res => res.json()).then(data => {
-                addToChat("🤖 AI: " + x.answer, "ai-message");
+            })  
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);  // Log the response to debug
+            })
+            .catch(error => {
+                console.error("Error:", error);  // Catch any errors
             });
         }
+        
+        
 
         function addToChat(message, type) {
             const chatBox = document.getElementById("chatBox");
